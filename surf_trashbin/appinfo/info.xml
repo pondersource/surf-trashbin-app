@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<info>
+	<id>surf_trashbin</id>
+	<name>SURF deleted files</name>
+	<description>
+Deleted shared files appear in the trashbin of the share receivers.
+
+	</description>
+	<licence>AGPL</licence>
+	<author>Yashar PourMohamad</author>
+	<default_enable/>
+	<version>0.0.1</version>
+	<namespace>SURF_Trashbin</namespace>
+	<dependencies>
+		<owncloud min-version="10.0.2.4" max-version="10" />
+	</dependencies>
+</info>
