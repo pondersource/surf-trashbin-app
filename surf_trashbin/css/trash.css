@@ -7,6 +7,7 @@
  * See the COPYING-README file.
  *
  */
+
 #app-content-trashbin tbody tr[data-type="file"] td a.name,
 #app-content-trashbin tbody tr[data-type="file"] td a.name span {
     cursor: default;
@@ -23,10 +24,14 @@
 	padding-bottom: 44px;
 }
 
+[class^="nav-icon-surftrashbin-"] {
+	background-image: url("../img/delete.svg");
+}
+
 /* move Deleted Files to bottom of sidebar */
-.nav-trashbin {
+[class^="nav-surftrashbin-"] {
 	position: fixed !important;
-	bottom: 44px;
+	bottom: 88px;
 	width: inherit !important;
 	background-color: #fff;
 	border-right: 1px solid #eee;

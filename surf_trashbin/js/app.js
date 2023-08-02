@@ -7,15 +7,19 @@
  * See the COPYING-README file.
  *
  */
+const urlParams = new URLSearchParams(window.location.search);
+const groupName = urlParams.get('view').substring(13);
+const contentId = 'app-content-surftrashbin-' + groupName;
+(function() {console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3 >' + groupName)})();
 
 /**
- * @namespace OCA.Trashbin
+ * @namespace OCA.groupName
  */
-OCA.Trashbin = {};
+OCA[groupName] = {};
 /**
- * @namespace OCA.Trashbin.App
+ * @namespace OCA.groupName.App
  */
-OCA.Trashbin.App = {
+OCA[groupName].App = {
 	_initialized: false,
 
 	initialize: function($el) {
@@ -24,8 +28,8 @@ OCA.Trashbin.App = {
 		}
 		this._initialized = true;
 		var urlParams = OC.Util.History.parseUrlQuery();
-		this.fileList = new OCA.Trashbin.FileList(
-			$('#app-content-trashbin'), {
+		this.fileList = new OCA[groupName].FileList(
+			$('#' + contentId), {
 				scrollContainer: $('#app-content'),
 				fileActions: this._createFileActions(),
 				detailsViewEnabled: false,
@@ -99,9 +103,10 @@ OCA.Trashbin.App = {
 };
 
 $(document).ready(function() {
-	$('#app-content-trashbin').one('show', function() {
+	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
+	$('#' + contentId).one('show', function() {
 		var App = OCA.Trashbin.App;
-		App.initialize($('#app-content-trashbin'));
+		App.initialize($('#' + contentId));
 		// force breadcrumb init
 		// App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
 	});

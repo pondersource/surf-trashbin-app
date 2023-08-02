@@ -8,6 +8,7 @@
  *
  */
 (function() {
+	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2 >' + groupName);
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**
@@ -39,7 +40,7 @@
 		this.initialize($el, options);
 	};
 	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
-		/** @lends OCA.Trashbin.FileList.prototype */ {
+		/** @lends OCA[groupName].FileList.prototype */ {
 		id: 'trashbin',
 		appName: t('files_trashbin', 'Deleted files'),
 
@@ -64,7 +65,7 @@
 				return parts;
 			};
 
-			OC.Plugins.attach('OCA.Trashbin.FileList', this);
+			OC.Plugins.attach('OCA[' + groupName + '].FileList', this);
 			return result;
 		},
 
@@ -113,7 +114,7 @@
 			if (params) {
 				q = '?' + OC.buildQueryString(params);
 			}
-			return OC.filePath('files_trashbin', 'ajax', action + '.php') + q;
+			return OC.filePath('surf_trashbin', 'ajax', action + '.php') + q;
 		},
 
 		setupUploadEvents: function() {
@@ -205,7 +206,7 @@
 				};
 			}
 
-			$.post(OC.filePath('files_trashbin', 'ajax', 'undelete.php'),
+			$.post(OC.filePath('surf_trashbin', 'ajax', 'undelete.php'),
 				params,
 				function(result) {
 					if (allFiles) {
@@ -255,7 +256,7 @@
 				}
 			}
 
-			$.post(OC.filePath('files_trashbin', 'ajax', 'delete.php'),
+			$.post(OC.filePath('surf_trashbin', 'ajax', 'delete.php'),
 					params,
 					function(result) {
 						if (allFiles) {
@@ -275,7 +276,7 @@
 		},
 
 		generatePreviewUrl: function(urlSpec) {
-			return OC.generateUrl('/apps/files_trashbin/ajax/preview.php?') + $.param(urlSpec);
+			return OC.generateUrl('/apps/surf_trashbin/ajax/preview.php?') + $.param(urlSpec);
 		},
 
 		getDownloadUrl: function() {
@@ -378,6 +379,6 @@
 
 	});
 
-	OCA.Trashbin.FileList = FileList;
+	OCA[groupName].FileList = FileList;
 })();
 

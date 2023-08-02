@@ -56,7 +56,7 @@ if (\class_exists('OCA\Files\App')) {
 			$group = $groups[$i];
 			\OCA\Files\App::getNavigationManager()->add(function () use ($group, $i) {
 				return [
-					'id' => $group,
+					'id' => 'surftrashbin-'.$group,
 					'appname' => 'surf_trashbin',
 					'script' => 'list.php',
 					'order' => 40 + $i,
