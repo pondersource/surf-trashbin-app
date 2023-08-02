@@ -23,8 +23,8 @@
 // Check if we are a user
 OCP\User::checkLoggedIn();
 
-$tmpl = new OCP\Template('files_trashbin', 'index', '');
-OCP\Util::addStyle('files_trashbin', 'trash');
-OCP\Util::addScript('files_trashbin', 'app');
-OCP\Util::addScript('files_trashbin', 'filelist');
+$tmpl = new OCP\Template('surf_trashbin', 'index', '');
+OCP\Util::addStyle('surf_trashbin', 'trash');
+OCP\Util::addScript('surf_trashbin', 'app');
+OCP\Util::addScript('surf_trashbin', 'filelist');
 $tmpl->printPage();

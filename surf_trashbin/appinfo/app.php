@@ -25,17 +25,46 @@
  *
  */
 
+use OCP\User;
+
 if (\class_exists('OCA\Files\App')) {
-	\OCA\Files\App::getNavigationManager()->add(function () {
-		// TODO Get user groups that have functional users. Then create one row per group.
-		return [
-			'id' => 'trashbin',
-			'appname' => 'surf_trashbin',
-			'script' => 'list.php',
-			'order' => 49,
-			'name' => 'bioinformatics',
-		];
-	});
+	$user = \OC::$server->getUserSession()->getUser();
+
+	if (isset($user)) {
+		$uid = $user->getUID();
+		$userManager = \OC::$server->getUserManager();
+		$groupManager = \OC::$server->getGroupManager();
+		$groups = $groupManager->getUserGroups($user);
+		$groups = \array_filter($groups, function($group) use ($userManager, $groupManager) {
+			$gid = $group->getGID();
+			$uid = 'f_'.$gid;
+			if (!$userManager->userExists($uid)) {
+				return false;
+			}
+			$subAdminOfGroups = $groupManager->getSubAdmin()->getSubAdminsGroups($userManager->get($uid));
+			$subAdminOfGroups = \array_filter($subAdminOfGroups, function($group) use ($gid) {
+				return $group->getGID() === $gid;
+			});
+			return \count($subAdminOfGroups) > 0;
+		});
+		$groups = \array_map(function($group) {
+			return $group->getGID();
+		}, $groups);
+		$groups = \array_values($groups);
+
+		for ($i = 0; $i < \count($groups); $i++) {
+			$group = $groups[$i];
+			\OCA\Files\App::getNavigationManager()->add(function () use ($group, $i) {
+				return [
+					'id' => $group,
+					'appname' => 'surf_trashbin',
+					'script' => 'list.php',
+					'order' => 40 + $i,
+					'name' => $group,
+				];
+			});
+		}
+	}
 
 	$app = new \OCA\SURF_Trashbin\AppInfo\Application();
 }
