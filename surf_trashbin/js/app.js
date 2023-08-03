@@ -10,7 +10,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const groupName = urlParams.get('view').substring(13);
 const contentId = 'app-content-surftrashbin-' + groupName;
-(function() {console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3 >' + groupName)})();
+(function() {console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii33 >' + groupName)})();
 
 /**
  * @namespace OCA.groupName
@@ -105,7 +105,8 @@ OCA[groupName].App = {
 $(document).ready(function() {
 	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
 	$('#' + contentId).one('show', function() {
-		var App = OCA.Trashbin.App;
+		console.log('oneeeee');
+		var App = OCA[groupName].App;
 		App.initialize($('#' + contentId));
 		// force breadcrumb init
 		// App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);

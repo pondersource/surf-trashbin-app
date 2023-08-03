@@ -8,7 +8,7 @@
  *
  */
 (function() {
-	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2 >' + groupName);
+	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii22 >' + groupName);
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**
@@ -48,6 +48,7 @@
 		 * @private
 		 */
 		initialize: function() {
+			console.log('initialize');
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
@@ -58,6 +59,7 @@
 			 * user friendly name.
 			 */
 			this.breadcrumb._makeCrumbs = function() {
+				console.log('make crumbs');
 				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
 				for (var i = 1; i < parts.length; i++) {
 					parts[i].name = getDeletedFileName(parts[i].name);
