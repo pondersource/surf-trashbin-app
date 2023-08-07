@@ -25,6 +25,7 @@ OCP\JSON::checkLoggedIn();
 \OC::$server->getSession()->close();
 
 // Load the files
+$groupName = $_GET['group'];
 $dir = isset($_GET['dir']) ? (string)$_GET['dir'] : '';
 $sortAttribute = isset($_GET['sort']) ? (string)$_GET['sort'] : 'name';
 $sortDirection = isset($_GET['sortdirection']) ? ($_GET['sortdirection'] === 'desc') : false;
@@ -32,7 +33,7 @@ $data = [];
 
 // make filelist
 try {
-	$files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
+	$files = \OCA\SURF_Trashbin\Helper::getTrashFiles($groupName, $dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
 } catch (Exception $e) {
 	\http_response_code(404);
 	exit();

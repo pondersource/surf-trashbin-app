@@ -23,7 +23,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Files_Trashbin;
+namespace OCA\SURF_Trashbin;
 
 use OC\Files\FileInfo;
 use OCP\Constants;
@@ -33,6 +33,7 @@ class Helper {
 	/**
 	 * Retrieves the contents of a trash bin directory.
 	 *
+	 * @param string $groupName Name of the group to retrieve the trash for
 	 * @param string $dir path to the directory inside the trashbin
 	 * or empty to retrieve the root of the trashbin
 	 * @param string $user
@@ -41,75 +42,32 @@ class Helper {
 	 * @param bool $addExtraData if true, file info will include original path
 	 * @return \OCP\Files\FileInfo[]
 	 */
-	public static function getTrashFiles($dir, $user, $sortAttribute = '', $sortDescending = false, $addExtraData = true) {
-		$result = [];
-		$timestamp = null;
+	public static function getTrashFiles($groupName, $dir, $user, $sortAttribute = '', $sortDescending = false, $addExtraData = true) {
+		$userSession = \OC::$server->getUserSession();
+		$userManager = \OC::$server->getUserManager();
+		$groupManager = \OC::$server->getGroupManager();
+		$mountManager = \OC::$server->getMountManager();
+		$mountConfigManager = \OC::$server->getMountProviderCollection();
 
-		$view = new \OC\Files\View('/' . $user . '/files_trashbin/files');
+		$userName = 'f_'.$groupName;
 
-		if (\ltrim($dir, '/') !== '' && !$view->is_dir($dir)) {
-			throw new \Exception('Directory does not exists');
+		if (!$groupManager->isInGroup($user, $groupName) || !$userManager->userExists($userName)) {
+			error_log('EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXITING');
+			return [];
 		}
 
-		$mount = $view->getMount($dir);
-		$storage = $mount->getStorage();
-		$absoluteDir = $view->getAbsolutePath($dir);
-		$internalPath = $mount->getInternalPath($absoluteDir);
+		$fUser = $userManager->get($userName);
+		$userSession->setUser($fUser);
 
-		$originalLocationsCache = null;
-		$dirContent = $storage->getCache()->getFolderContents($mount->getInternalPath($view->getAbsolutePath($dir)));
-		foreach ($dirContent as $entry) {
-			// construct base fileinfo entries
-			$entryName = $entry->getName();
-			$id = $entry->getId();
-			$name = $entryName;
-			if ($dir === '' || $dir === '/') {
-				$pathparts = \pathinfo($entryName);
-				$timestamp = \substr($pathparts['extension'], 1);
-				$name = $pathparts['filename'];
-			} elseif ($timestamp === null) {
-				// for subfolders we need to calculate the timestamp only once
-				$parts = \explode('/', \ltrim($dir, '/'));
-				$timestamp = \substr(\pathinfo($parts[0], PATHINFO_EXTENSION), 1);
-			}
+		$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
+		$mountManager->addMount($fUserMount);
 
-			$i = [
-				'name' => $name,
-				'mtime' => $timestamp,
-				'mimetype' => $entry->getMimeType(),
-				'type' => $entry->getMimeType() === ICacheEntry::DIRECTORY_MIMETYPE ? 'dir' : 'file',
-				'directory' => ($dir === '/') ? '' : $dir,
-				'size' => $entry->getSize(),
-				'etag' => '',
-				'permissions' => Constants::PERMISSION_ALL - Constants::PERMISSION_SHARE
-			];
+		$result = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, $userName, $sortAttribute, $sortDescending);
 
-			// if original file path of the trashed file required, add in extraData
-			if ($addExtraData) {
-				if (!$originalLocationsCache) {
-					$originalLocationsCache = \OCA\Files_Trashbin\Trashbin::getLocations($user);
-				}
+		$realUser = $userManager->get($user);
+		$userSession->setUser($realUser);
 
-				$originalName = \substr($entryName, 0, -\strlen($timestamp)-2);
-				if (isset($originalLocationsCache[$originalName][$timestamp])) {
-					$originalPath = $originalLocationsCache[$originalName][$timestamp];
-					if (\substr($originalPath, -1) === '/') {
-						$originalPath = \substr($originalPath, 0, -1);
-					}
-
-					$i['extraData'] = $originalPath . '/' . $originalName;
-				}
-			}
-
-			// set FileInfo object on the constructed fileinfo array
-			$result[] = new FileInfo($absoluteDir . '/' . $i['name'], $storage, $internalPath . '/' . $i['name'], $i, $mount);
-		}
-
-		// if sorting enabled use selected sorting algorithm
-		if ($sortAttribute !== '') {
-			return \OCA\Files\Helper::sortFiles($result, $sortAttribute, $sortDescending);
-		}
-
+		error_log('RESULT ISSSSSSSSSSSSSSSSSSSS: '.var_export($userName, true));
 		return $result;
 	}
 

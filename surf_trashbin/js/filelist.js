@@ -321,6 +321,7 @@
 			this._reloadCall = $.ajax({
 				url: this.getAjaxUrl('list'),
 				data: {
+					group : groupName,
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
