@@ -30,6 +30,24 @@ OCP\JSON::callCheck();
 
 $folder = isset($_POST['dir']) ? $_POST['dir'] : '/';
 
+
+$groupName = $_POST['group'];
+
+$userSession = \OC::$server->getUserSession();
+$userManager = \OC::$server->getUserManager();
+$groupManager = \OC::$server->getGroupManager();
+$mountManager = \OC::$server->getMountManager();
+$mountConfigManager = \OC::$server->getMountProviderCollection();
+$realUser = \OCP\User::getUser();
+
+$fUserName = 'f_'.$groupName;
+$fUser = $userManager->get($fUserName);
+$userSession->setUser($fUser);
+
+$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
+$mountManager->addMount($fUserMount);
+
+
 // "empty trash" command
 if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true') {
 	$deleteAll = true;

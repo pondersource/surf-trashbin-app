@@ -239,14 +239,16 @@
 			if (allFiles) {
 				params = {
 					allfiles: true,
-					dir: this.getCurrentDirectory()
+					dir: this.getCurrentDirectory(),
+					group: groupName
 				};
 			}
 			else {
 				files = _.pluck(this.getSelectedFiles(), 'name');
 				params = {
 					files: JSON.stringify(files),
-					dir: this.getCurrentDirectory()
+					dir: this.getCurrentDirectory(),
+					group: groupName
 				};
 			}
 
