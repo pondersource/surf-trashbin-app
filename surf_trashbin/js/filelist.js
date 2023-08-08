@@ -283,7 +283,7 @@
 		},
 
 		generatePreviewUrl: function(urlSpec) {
-			return OC.generateUrl('/apps/surf_trashbin/ajax/preview.php?') + $.param(urlSpec);
+			return OC.generateUrl('/apps/surf_trashbin/ajax/preview.php?') + $.param(urlSpec) + '&group='+groupName;
 		},
 
 		getDownloadUrl: function() {

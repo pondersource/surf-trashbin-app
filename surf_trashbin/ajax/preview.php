@@ -25,10 +25,28 @@
  */
 \OC_Util::checkLoggedIn();
 \OC::$server->getSession()->close();
-
+error_log('PREVIEWWWWWWWWWWWWWWWWWWWWWW: '.$_GET['file']);
 if (!\OC_App::isEnabled('files_trashbin')) {
 	exit;
 }
+
+
+$groupName = $_GET['group'];
+
+$userSession = \OC::$server->getUserSession();
+$userManager = \OC::$server->getUserManager();
+$groupManager = \OC::$server->getGroupManager();
+$mountManager = \OC::$server->getMountManager();
+$mountConfigManager = \OC::$server->getMountProviderCollection();
+$realUser = \OCP\User::getUser();
+
+$fUserName = 'f_'.$groupName;
+$fUser = $userManager->get($fUserName);
+$userSession->setUser($fUser);
+
+$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
+$mountManager->addMount($fUserMount);
+
 
 $file = \array_key_exists('file', $_GET) ? (string) $_GET['file'] : '';
 $maxX = \array_key_exists('x', $_GET) ? (int) $_GET['x'] : '44';
