@@ -30,6 +30,25 @@ OCP\JSON::callCheck();
 
 $files = $_POST['files'];
 $dir = '/';
+
+
+$groupName = $_POST['group'];
+
+$userSession = \OC::$server->getUserSession();
+$userManager = \OC::$server->getUserManager();
+$groupManager = \OC::$server->getGroupManager();
+$mountManager = \OC::$server->getMountManager();
+$mountConfigManager = \OC::$server->getMountProviderCollection();
+$realUser = \OCP\User::getUser();
+
+$fUserName = 'f_'.$groupName;
+$fUser = $userManager->get($fUserName);
+$userSession->setUser($fUser);
+
+$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
+$mountManager->addMount($fUserMount);
+
+
 if (isset($_POST['dir'])) {
 	$dir = \rtrim((string)$_POST['dir'], '/'). '/';
 }
@@ -41,7 +60,7 @@ if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true') {
 	if ($dir === '' || $dir === '/') {
 		$dirListing = false;
 	}
-	foreach (OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), '', false, false) as $file) {
+	foreach (OCA\SURF_Trashbin\Helper::getTrashFiles($groupName, $dir, \OCP\User::getUser(), '', false, false) as $file) {
 		$fileName = $file['name'];
 		if (!$dirListing) {
 			$fileName .= '.d' . $file['mtime'];
@@ -63,7 +82,7 @@ foreach ($list as $file) {
 	// "restore" will require the whole path inside the trashbin including
 	// the deletion timestamp in the filename, such as "/file.txt.d12345"
 	// or "/folder.d12345/file.txt"
-	if (!OCA\Files_Trashbin\Trashbin::restore($filename)) {
+	if (!OCA\SURF_Trashbin\Trashbin::restore($filename)) {
 		$error[] = $filename;
 		\OCP\Util::writeLog('files_trashbin', 'can\'t restore ' . $filename, \OCP\Util::DEBUG);
 	} else {

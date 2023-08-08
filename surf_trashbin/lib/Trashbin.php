@@ -108,18 +108,19 @@ class Trashbin {
 	 * @throws \OC\User\NoUserException
 	 */
 	public static function getUidAndFilename($filename) {
-		$uid = Filesystem::getOwner($filename);
+		//$uid = Filesystem::getOwner($filename);
+		// $uid = (new View('/'))->getOwner($filename);
 		$userManager = \OC::$server->getUserManager();
 		// if the user with the UID doesn't exists, e.g. because the UID points
 		// to a remote user with a federated cloud ID we use the current logged-in
 		// user. We need a valid local user to move the file to the right trash bin
-		if (!$userManager->userExists($uid)) {
+		// if (!$userManager->userExists($uid)) {
 			$uid = User::getUser();
-		}
-		if (!$uid) {
-			// no owner, usually because of share link from ext storage
-			return [null, null];
-		}
+		// }
+		// if (!$uid) {
+		// 	// no owner, usually because of share link from ext storage
+		// 	return [null, null];
+		// }
 		Filesystem::initMountPoints($uid);
 		if ($uid != User::getUser()) {
 			$info = Filesystem::getFileInfo($filename);
@@ -383,6 +384,7 @@ class Trashbin {
 			$rootView = new View('/');
 
 			$target = Filesystem::normalizePath('/' . $targetLocation);
+			error_log('TARGET IS: '.$target);
 
 			list($owner, $ownerPath) = self::getUidAndFilename($target);
 

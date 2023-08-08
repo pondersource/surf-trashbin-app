@@ -8,7 +8,7 @@
  *
  */
 (function() {
-	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii22 >' + groupName);
+	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2222 >' + groupName);
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**
@@ -67,7 +67,7 @@
 				return parts;
 			};
 
-			OC.Plugins.attach('OCA[' + groupName + '].FileList', this);
+			OC.Plugins.attach('OCA.trashBin.FileList', this);
 			return result;
 		},
 
@@ -193,7 +193,8 @@
 				this.showMask();
 				params = {
 					allfiles: true,
-					dir: this.getCurrentDirectory()
+					dir: this.getCurrentDirectory(),
+					group: groupName
 				};
 			}
 			else {
@@ -204,10 +205,12 @@
 				}
 				params = {
 					files: JSON.stringify(files),
-					dir: this.getCurrentDirectory()
+					dir: this.getCurrentDirectory(),
+					group: groupName
 				};
 			}
 
+			console.log('here here> '+OC.filePath('surf_trashbin', 'ajax', 'undelete.php'));
 			$.post(OC.filePath('surf_trashbin', 'ajax', 'undelete.php'),
 				params,
 				function(result) {

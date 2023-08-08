@@ -61,9 +61,10 @@ OCA[groupName].App = {
 				var deleteAction = tr.children("td.date").children(".action.delete");
 				deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
 				fileList.disableActions();
-				$.post(OC.filePath('files_trashbin', 'ajax', 'undelete.php'), {
+				$.post(OC.filePath('surf_trashbin', 'ajax', 'undelete.php'), {
 						files: JSON.stringify([filename]),
-						dir: fileList.getCurrentDirectory()
+						dir: fileList.getCurrentDirectory(),
+						group: groupName
 					},
 					_.bind(fileList._removeCallback, fileList)
 				);
@@ -90,9 +91,10 @@ OCA[groupName].App = {
 				var deleteAction = tr.children("td.date").children(".action.delete");
 				deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
 				fileList.disableActions();
-				$.post(OC.filePath('files_trashbin', 'ajax', 'delete.php'), {
+				$.post(OC.filePath('surf_trashbin', 'ajax', 'delete.php'), {
 						files: JSON.stringify([filename]),
-						dir: fileList.getCurrentDirectory()
+						dir: fileList.getCurrentDirectory(),
+						group: groupName
 					},
 					_.bind(fileList._removeCallback, fileList)
 				);
