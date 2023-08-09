@@ -47,7 +47,6 @@ $userSession->setUser($fUser);
 $fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
 $mountManager->addMount($fUserMount);
 
-
 // "empty trash" command
 if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true') {
 	$deleteAll = true;
@@ -100,3 +99,5 @@ if ($error) {
 } else {
 	OCP\JSON::success(["data" => ["success" => $success]]);
 }
+
+$userSession->setUser($realUser);

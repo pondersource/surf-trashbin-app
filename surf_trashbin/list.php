@@ -22,7 +22,7 @@
  */
 // Check if we are a user
 OCP\User::checkLoggedIn();
-
+error_log('PRINT PRINT PRINT PRINT PRINT PRINT PRTTTTTTTTTIIIIIIIINNNNNNTTTTTTTTt');
 $tmpl = new OCP\Template('surf_trashbin', 'index', '');
 OCP\Util::addStyle('surf_trashbin', 'trash');
 OCP\Util::addScript('surf_trashbin', 'app');

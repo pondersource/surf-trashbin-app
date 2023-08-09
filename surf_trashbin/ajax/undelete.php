@@ -103,3 +103,5 @@ if ($error) {
 } else {
 	OCP\JSON::success(["data" => ["success" => $success]]);
 }
+
+$userSession->setUser($realUser);

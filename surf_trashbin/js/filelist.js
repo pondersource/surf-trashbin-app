@@ -7,8 +7,8 @@
  * See the COPYING-README file.
  *
  */
-(function() {
-	console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2222 >' + groupName);
+function asdasdasd(gName) {
+	//console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2222 >' + groupName);
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**
@@ -37,10 +37,13 @@
 	 * @param [options] map of options
 	 */
 	var FileList = function($el, options) {
+		console.log('initialize1>>>>>>>> ' + $el[0].id);
+		this.$el = $el;
+		this.groupName = $el[0].id.substring(25);
 		this.initialize($el, options);
 	};
 	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
-		/** @lends OCA[groupName].FileList.prototype */ {
+		/** @lends OCA[this.groupName].FileList.prototype */ {
 		id: 'trashbin',
 		appName: t('files_trashbin', 'Deleted files'),
 
@@ -48,7 +51,7 @@
 		 * @private
 		 */
 		initialize: function() {
-			console.log('initialize');
+			console.log('initialize2>>>>>>>> ' + this.$el[0].id);
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
@@ -194,7 +197,7 @@
 				params = {
 					allfiles: true,
 					dir: this.getCurrentDirectory(),
-					group: groupName
+					group: this.groupName
 				};
 			}
 			else {
@@ -206,7 +209,7 @@
 				params = {
 					files: JSON.stringify(files),
 					dir: this.getCurrentDirectory(),
-					group: groupName
+					group: this.groupName
 				};
 			}
 
@@ -240,7 +243,7 @@
 				params = {
 					allfiles: true,
 					dir: this.getCurrentDirectory(),
-					group: groupName
+					group: this.groupName
 				};
 			}
 			else {
@@ -248,7 +251,7 @@
 				params = {
 					files: JSON.stringify(files),
 					dir: this.getCurrentDirectory(),
-					group: groupName
+					group: this.groupName
 				};
 			}
 
@@ -283,7 +286,7 @@
 		},
 
 		generatePreviewUrl: function(urlSpec) {
-			return OC.generateUrl('/apps/surf_trashbin/ajax/preview.php?') + $.param(urlSpec) + '&group='+groupName;
+			return OC.generateUrl('/apps/surf_trashbin/ajax/preview.php?') + $.param(urlSpec) + '&group='+this.groupName;
 		},
 
 		getDownloadUrl: function() {
@@ -326,7 +329,7 @@
 			this._reloadCall = $.ajax({
 				url: this.getAjaxUrl('list'),
 				data: {
-					group : groupName,
+					group : this.groupName,
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
@@ -387,6 +390,6 @@
 
 	});
 
-	OCA[groupName].FileList = FileList;
-})();
+	OCA[gName].FileList = FileList;
+}
 
