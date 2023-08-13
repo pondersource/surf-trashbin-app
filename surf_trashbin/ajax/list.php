@@ -43,6 +43,6 @@ $encodedDir = \OCP\Util::encodePath($dir);
 
 $data['permissions'] = 0;
 $data['directory'] = $dir;
-$data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
+$data['files'] = \OCA\SURF_Trashbin\Helper::formatFileInfos($files);
 
 OCP\JSON::success(['data' => $data]);

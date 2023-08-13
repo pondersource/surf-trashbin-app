@@ -29,8 +29,6 @@ $this->create('surf_ajax_trashbin_preview', 'ajax/preview.php')
 	->actionInclude('surf_trashbin/ajax/preview.php');
 $this->create('surf_trashbin_ajax_delete', 'ajax/delete.php')
 	->actionInclude('surf_trashbin/ajax/delete.php');
-$this->create('surf_trashbin_ajax_isEmpty', 'ajax/isEmpty.php')
-	->actionInclude('surf_trashbin/ajax/isEmpty.php');
 $this->create('surf_trashbin_ajax_list', 'ajax/list.php')
 	->actionInclude('surf_trashbin/ajax/list.php');
 $this->create('surf_trashbin_ajax_undelete', 'ajax/undelete.php')

@@ -25,7 +25,7 @@
  */
 \OC_Util::checkLoggedIn();
 \OC::$server->getSession()->close();
-error_log('PREVIEWWWWWWWWWWWWWWWWWWWWWW: '.$_GET['file']);
+
 if (!\OC_App::isEnabled('files_trashbin')) {
 	exit;
 }

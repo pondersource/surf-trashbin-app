@@ -52,7 +52,6 @@ class Helper {
 		$userName = 'f_'.$groupName;
 
 		if (!$groupManager->isInGroup($user, $groupName) || !$userManager->userExists($userName)) {
-			error_log('EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXITING');
 			return [];
 		}
 
@@ -67,7 +66,6 @@ class Helper {
 		$realUser = $userManager->get($user);
 		$userSession->setUser($realUser);
 
-		error_log('RESULT ISSSSSSSSSSSSSSSSSSSS: '.var_export($userName, true));
 		return $result;
 	}
 

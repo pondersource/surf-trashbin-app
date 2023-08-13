@@ -17,8 +17,6 @@ $(document).ready(function() {
 		let contentId = contents[i].id;
 		let groupName = contentId.substring(25);
 
-		console.log('Hiiiiiiii33 >' + groupName);
-
 		if (OCA[groupName] == null) {
 			OCA[groupName] = {};
 			OCA[groupName].App = {
@@ -31,9 +29,6 @@ $(document).ready(function() {
 					this._initialized = true;
 					asdasdasd(groupName);
 					var urlParams = OC.Util.History.parseUrlQuery();
-					console.log('CHECK CHECK');
-					console.log('group name ' + groupName);
-					console.log('class name: ' + OCA[groupName].FileList.name);
 					this.fileList = new OCA[groupName].FileList(
 						$('#' + contentId), {
 							scrollContainer: $('#app-content'),
@@ -111,7 +106,6 @@ $(document).ready(function() {
 			};
 
 			$('#' + contentId).one('show', function() {
-				console.log('oneeeee');
 				var App = OCA[groupName].App;
 				App.initialize($('#' + contentId));
 				// force breadcrumb init

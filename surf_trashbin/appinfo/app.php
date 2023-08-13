@@ -32,27 +32,6 @@ if (\class_exists('OCA\Files\App')) {
 	$user = \OC::$server->getUserSession()->getUser();
 
 	if (isset($user)) {
-		// $uid = $user->getUID();
-		// $userManager = \OC::$server->getUserManager();
-		// $groupManager = \OC::$server->getGroupManager();
-		// $groups = $groupManager->getUserGroups($user);
-		// $groups = \array_filter($groups, function($group) use ($userManager, $groupManager) {
-		// 	$gid = $group->getGID();
-		// 	$uid = 'f_'.$gid;
-		// 	if (!$userManager->userExists($uid)) {
-		// 		return false;
-		// 	}
-		// 	$subAdminOfGroups = $groupManager->getSubAdmin()->getSubAdminsGroups($userManager->get($uid));
-		// 	$subAdminOfGroups = \array_filter($subAdminOfGroups, function($group) use ($gid) {
-		// 		return $group->getGID() === $gid;
-		// 	});
-		// 	return \count($subAdminOfGroups) > 0;
-		// });
-		// $groups = \array_map(function($group) {
-		// 	return $group->getGID();
-		// }, $groups);
-		// $groups = \array_values($groups);
-
 		$surfHelper = new SurfHelper();
 		$groups = $surfHelper->getGroupsUserOwns($user);
 

@@ -8,7 +8,6 @@
  *
  */
 function asdasdasd(gName) {
-	//console.log('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii2222 >' + groupName);
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**
@@ -37,7 +36,6 @@ function asdasdasd(gName) {
 	 * @param [options] map of options
 	 */
 	var FileList = function($el, options) {
-		console.log('initialize1>>>>>>>> ' + $el[0].id);
 		this.$el = $el;
 		this.groupName = $el[0].id.substring(25);
 		this.initialize($el, options);
@@ -51,7 +49,6 @@ function asdasdasd(gName) {
 		 * @private
 		 */
 		initialize: function() {
-			console.log('initialize2>>>>>>>> ' + this.$el[0].id);
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 
@@ -62,7 +59,6 @@ function asdasdasd(gName) {
 			 * user friendly name.
 			 */
 			this.breadcrumb._makeCrumbs = function() {
-				console.log('make crumbs');
 				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
 				for (var i = 1; i < parts.length; i++) {
 					parts[i].name = getDeletedFileName(parts[i].name);
@@ -213,7 +209,6 @@ function asdasdasd(gName) {
 				};
 			}
 
-			console.log('here here> '+OC.filePath('surf_trashbin', 'ajax', 'undelete.php'));
 			$.post(OC.filePath('surf_trashbin', 'ajax', 'undelete.php'),
 				params,
 				function(result) {

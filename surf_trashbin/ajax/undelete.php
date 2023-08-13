@@ -84,7 +84,7 @@ foreach ($list as $file) {
 	// or "/folder.d12345/file.txt"
 	if (!OCA\SURF_Trashbin\Trashbin::restore($filename)) {
 		$error[] = $filename;
-		\OCP\Util::writeLog('files_trashbin', 'can\'t restore ' . $filename, \OCP\Util::DEBUG);
+		\OCP\Util::writeLog('surf_trashbin', 'can\'t restore ' . $filename, \OCP\Util::DEBUG);
 	} else {
 		$success[$i]['filename'] = $file;
 		$i++;
