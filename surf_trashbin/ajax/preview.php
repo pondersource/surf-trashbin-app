@@ -56,14 +56,12 @@ $scalingUp = \array_key_exists('scalingup', $_GET) ? (bool) $_GET['scalingup'] :
 if ($file === '') {
 	\OC_Response::setStatus(400); //400 Bad Request
 	\OCP\Util::writeLog('core-preview', 'No file parameter was passed', \OCP\Util::DEBUG);
-	$userSession->setUser($realUser);
 	exit;
 }
 
 if ($maxX === 0 || $maxY === 0) {
 	\OC_Response::setStatus(400); //400 Bad Request
 	\OCP\Util::writeLog('core-preview', 'x and/or y set to 0', \OCP\Util::DEBUG);
-	$userSession->setUser($realUser);
 	exit;
 }
 
@@ -104,5 +102,3 @@ try {
 	\OC_Response::setStatus(500);
 	\OCP\Util::writeLog('core', $e->getmessage(), \OCP\Util::ERROR);
 }
-
-$userSession->setUser($realUser);
