@@ -52,9 +52,8 @@ class SurfHelper {
         $parameters = [$uid, $fuid];
 
         $statement = $this->dbConnection->prepare($query);
-		$shares = $statement->execute($parameters);
-
-        return $statement->rowCount() > 0;
+		$statement->execute($parameters);
+        return $statement->fetchOne();
     }
 
 }

@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Files_Trashbin\Tests;
+namespace OCA\SURF_Trashbin\Tests;
 
 use OC\Files\Cache\Watcher;
 use OC\Files\Filesystem;
@@ -34,8 +34,9 @@ use OCA\Files_Trashbin\Trashbin;
  * @group DB
  */
 abstract class TestCase extends \Test\TestCase {
-	public const TEST_TRASHBIN_USER1 = "test-trashbin-user1";
-	public const TEST_TRASHBIN_USER2 = "test-trashbin-user2";
+	public const TEST_GROUP = 'test-group';
+	public const TEST_FUNCTIONAL_USER = 'f_'.self::TEST_GROUP;
+	public const TEST_OWNER_USER = 'test_owner-user';
 
 	protected $trashRoot1;
 	protected $trashRoot2;
@@ -72,18 +73,79 @@ abstract class TestCase extends \Test\TestCase {
 		self::$rememberRetentionObligation = $config->getSystemValue('trashbin_retention_obligation', Expiration::DEFAULT_RETENTION_OBLIGATION);
 		$config->setSystemValue('trashbin_retention_obligation', 'auto, 2');
 
-		// create test user
-		self::loginHelper(self::TEST_TRASHBIN_USER2, true);
-		self::loginHelper(self::TEST_TRASHBIN_USER1, true);
+		// create test users
+		self::loginHelper(self::TEST_OWNER_USER, true);
+		self::loginHelper(self::TEST_FUNCTIONAL_USER, true);
+
+		// create test group
+		$groupBackend = new \Test\Util\Group\Dummy();
+		$groupBackend->createGroup(self::TEST_GROUP);
+		$groupBackend->addToGroup(self::TEST_FUNCTIONAL_USER, self::TEST_GROUP);
+		$groupBackend->addToGroup(self::TEST_OWNER_USER, self::TEST_GROUP);
+		\OC::$server->getGroupManager()->addBackend($groupBackend);
+
+		// Make functional user admin of the group
+		$connection = \OC::$server->getDatabaseConnection();
+		$connection->executeStatement('INSERT INTO `*PREFIX*group_admin` VALUES (?, ?)', [self::TEST_GROUP, self::TEST_FUNCTIONAL_USER]);
+
+		// Share a folder from functional user with the owner user
+		$userFolder = \OC::$server->getUserFolder();
+		$folder = $userFolder->newFolder('shared');
+
+		$permission = \OCP\Constants::PERMISSION_ALL;
+		$share = self::share(
+			\OCP\Share::SHARE_TYPE_USER,
+			$folder,
+			self::TEST_FUNCTIONAL_USER,
+			self::TEST_OWNER_USER,
+			$permission
+		);
+	}
+
+	/**
+	 * @param int $type The share type
+	 * @param string $path The path to share relative to $initiators root
+	 * @param string $initiator
+	 * @param string $recipient
+	 * @param int $permissions
+	 * @return \OCP\Share\IShare
+	 */
+	protected static function share($type, $path, $initiator, $recipient, $permissions) {
+		$node = $path;
+
+		$shareManager = \OC::$server->getShareManager();
+		$share = $shareManager->newShare();
+		$share->setShareType($type)
+			->setSharedWith($recipient)
+			->setSharedBy($initiator)
+			->setNode($node)
+			->setPermissions($permissions);
+		$share = $shareManager->createShare($share);
+		
+		return $share;
 	}
 
 	public static function tearDownAfterClass(): void {
+		// clean up test group
+		$group = \OC::$server->getGroupManager()->get(self::TEST_GROUP);
+		if ($group !== null) {
+			$group->delete();
+		}
+
+		// remove admin
+		$connection = \OC::$server->getDatabaseConnection();
+		$connection->executeUpdate('DELETE FROM `*PREFIX*group_user` WHERE `gid`=? AND `uid`=?', [self::TEST_GROUP, self::TEST_FUNCTIONAL_USER]);
+
+		// reset backend
+		\OC::$server->getGroupManager()->clearBackends();
+		\OC::$server->getGroupManager()->addBackend(new \OC\Group\Database());
+
 		// cleanup test user
-		$user = \OC::$server->getUserManager()->get(self::TEST_TRASHBIN_USER1);
+		$user = \OC::$server->getUserManager()->get(self::TEST_FUNCTIONAL_USER);
 		if ($user !== null) {
 			$user->delete();
 		}
-		$user = \OC::$server->getUserManager()->get(self::TEST_TRASHBIN_USER2);
+		$user = \OC::$server->getUserManager()->get(self::TEST_OWNER_USER);
 		if ($user !== null) {
 			$user->delete();
 		}
@@ -97,6 +159,9 @@ abstract class TestCase extends \Test\TestCase {
 		if (self::$trashBinStatus) {
 			\OC::$server->getAppManager()->enableApp('files_trashbin');
 		}
+
+		$query = \OCP\DB::prepare('DELETE FROM `*PREFIX*share`');
+		$query->execute();
 
 		parent::tearDownAfterClass();
 	}
@@ -118,8 +183,8 @@ abstract class TestCase extends \Test\TestCase {
 			}));
 		$this->overwriteService('AllConfig', $mockConfig);
 
-		$this->trashRoot1 = '/' . self::TEST_TRASHBIN_USER1 . '/files_trashbin';
-		$this->trashRoot2 = '/' . self::TEST_TRASHBIN_USER2 . '/files_trashbin';
+		$this->trashRoot1 = '/' . self::TEST_FUNCTIONAL_USER . '/files_trashbin';
+		$this->trashRoot2 = '/' . self::TEST_OWNER_USER . '/files_trashbin';
 		$this->rootView = new View();
 	}
 
@@ -128,8 +193,8 @@ abstract class TestCase extends \Test\TestCase {
 		// disable trashbin to be able to properly clean up
 		\OC::$server->getAppManager()->disableApp('files_trashbin');
 
-		$this->rootView->deleteAll('/' . self::TEST_TRASHBIN_USER1 . '/files');
-		$this->rootView->deleteAll('/' . self::TEST_TRASHBIN_USER2 . '/files');
+		$this->rootView->deleteAll('/' . self::TEST_FUNCTIONAL_USER . '/files');
+		$this->rootView->deleteAll('/' . self::TEST_OWNER_USER . '/files');
 		$this->rootView->deleteAll($this->trashRoot1);
 		$this->rootView->deleteAll($this->trashRoot2);
 

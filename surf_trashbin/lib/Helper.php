@@ -45,15 +45,17 @@ class Helper {
 	public static function getTrashFiles($groupName, $dir, $user, $sortAttribute = '', $sortDescending = false, $addExtraData = true) {
 		$userSession = \OC::$server->getUserSession();
 		$userManager = \OC::$server->getUserManager();
-		$groupManager = \OC::$server->getGroupManager();
 		$mountManager = \OC::$server->getMountManager();
 		$mountConfigManager = \OC::$server->getMountProviderCollection();
 
-		$userName = 'f_'.$groupName;
+		$surfHelper = new SurfHelper();
 
-		if (!$groupManager->isInGroup($user, $groupName) || !$userManager->userExists($userName)) {
+		if (!$surfHelper->isUserOwnerOfGroup($user, $groupName)) {
+			error_log('NOOOOO');
 			return [];
 		}
+
+		$userName = 'f_'.$groupName;
 
 		$fUser = $userManager->get($userName);
 		$userSession->setUser($fUser);
@@ -61,6 +63,7 @@ class Helper {
 		$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
 		$mountManager->addMount($fUserMount);
 
+		error_log("TRULY???? $dir $userName $sortAttribute $sortDescending");
 		$result = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, $userName, $sortAttribute, $sortDescending);
 
 		$realUser = $userManager->get($user);
