@@ -51,7 +51,6 @@ class Helper {
 		$surfHelper = new SurfHelper();
 
 		if (!$surfHelper->isUserOwnerOfGroup($user, $groupName)) {
-			error_log('NOOOOO');
 			return [];
 		}
 
@@ -63,7 +62,6 @@ class Helper {
 		$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
 		$mountManager->addMount($fUserMount);
 
-		error_log("TRULY???? $dir $userName $sortAttribute $sortDescending");
 		$result = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, $userName, $sortAttribute, $sortDescending);
 
 		$realUser = $userManager->get($user);

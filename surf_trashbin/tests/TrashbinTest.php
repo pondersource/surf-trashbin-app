@@ -53,15 +53,13 @@ class TrashbinTest extends TestCase {
 	}
 
 	/**
-	 * Test restoring a file
+	 * Test trashbin
 	 */
-	public function testRestoreFileInRoot() {
+	public function testTrashbin() {
 		$userSession = \OC::$server->getUserSession();
-		error_log('user is> '.$userSession->getUser()->getUID());
 
 		$userFolder = \OC::$server->getUserFolder();
-		// $folder = $userFolder->get('shared');
-		$folder = $userFolder;
+		$folder = $userFolder->get(self::TEST_SHARED_FOLDER);
 		$file = $folder->newFile('file1.txt');
 		$file->putContent('foo');
 
@@ -71,8 +69,36 @@ class TrashbinTest extends TestCase {
 
 		$this->assertFalse($folder->nodeExists('file1.txt'));
 
-		// $filesInTrash = Helper::getTrashFiles(self::TEST_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
-		$filesInTrash = \OCA\Files_Trashbin\Helper::getTrashFiles('/', self::TEST_OWNER_USER, 'mtime', true);
+		$filesInTrash = Helper::getTrashFiles(self::TEST_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
 		$this->assertCount(1, $filesInTrash);
+
+		$deletedFileData = $filesInTrash[0]->getData();
+		$path = $deletedFileData['name'].'.d'.$deletedFileData['mtime'];
+
+		$filesInTrash = Helper::getTrashFiles(self::TEST_RANDOM_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
+		$this->assertCount(0, $filesInTrash);
+
+		$mountPoint = $this->setFunctionalUser();
+		$this->assertTrue(Trashbin::restore($path));
+
+		$this->setOwnerUser($mountPoint);
+		$this->assertTrue($folder->nodeExists('file1.txt'));
+	}
+
+	private function setFunctionalUser() {
+		$fUser = \OC::$server->getUserManager()->get(self::TEST_FUNCTIONAL_USER);
+		\OC::$server->getUserSession()->setUser($fUser);
+
+		$fUserMount = \OC::$server->getMountProviderCollection()->getHomeMountForUser($fUser);
+		\OC::$server->getMountManager()->addMount($fUserMount);
+
+		return $fUserMount->getMountPoint();
+	}
+
+	private function setOwnerUser(string $mountPoint) {
+		$fUser = \OC::$server->getUserManager()->get(self::TEST_OWNER_USER);
+		\OC::$server->getUserSession()->setUser($fUser);
+
+		\OC::$server->getMountManager()->removeMount($mountPoint);
 	}
 }

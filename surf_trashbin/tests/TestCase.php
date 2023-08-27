@@ -35,8 +35,10 @@ use OCA\Files_Trashbin\Trashbin;
  */
 abstract class TestCase extends \Test\TestCase {
 	public const TEST_GROUP = 'test-group';
+	public const TEST_RANDOM_GROUP = 'test-random-group';
 	public const TEST_FUNCTIONAL_USER = 'f_'.self::TEST_GROUP;
 	public const TEST_OWNER_USER = 'test_owner-user';
+	public const TEST_SHARED_FOLDER = 'shared';
 
 	protected $trashRoot1;
 	protected $trashRoot2;
@@ -73,6 +75,9 @@ abstract class TestCase extends \Test\TestCase {
 		self::$rememberRetentionObligation = $config->getSystemValue('trashbin_retention_obligation', Expiration::DEFAULT_RETENTION_OBLIGATION);
 		$config->setSystemValue('trashbin_retention_obligation', 'auto, 2');
 
+		// register hooks
+		Trashbin::registerHooks();
+
 		// create test users
 		self::loginHelper(self::TEST_OWNER_USER, true);
 		self::loginHelper(self::TEST_FUNCTIONAL_USER, true);
@@ -80,6 +85,7 @@ abstract class TestCase extends \Test\TestCase {
 		// create test group
 		$groupBackend = new \Test\Util\Group\Dummy();
 		$groupBackend->createGroup(self::TEST_GROUP);
+		$groupBackend->createGroup(self::TEST_RANDOM_GROUP);
 		$groupBackend->addToGroup(self::TEST_FUNCTIONAL_USER, self::TEST_GROUP);
 		$groupBackend->addToGroup(self::TEST_OWNER_USER, self::TEST_GROUP);
 		\OC::$server->getGroupManager()->addBackend($groupBackend);
@@ -90,7 +96,7 @@ abstract class TestCase extends \Test\TestCase {
 
 		// Share a folder from functional user with the owner user
 		$userFolder = \OC::$server->getUserFolder();
-		$folder = $userFolder->newFolder('shared');
+		$folder = $userFolder->newFolder(self::TEST_SHARED_FOLDER);
 
 		$permission = \OCP\Constants::PERMISSION_ALL;
 		$share = self::share(
