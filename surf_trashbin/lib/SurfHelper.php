@@ -48,6 +48,7 @@ class SurfHelper {
             return false;
         };
 
+        // TODO add share type
         $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_with`=? AND `uid_owner`=?';
         $parameters = [$uid, $fuid];
 

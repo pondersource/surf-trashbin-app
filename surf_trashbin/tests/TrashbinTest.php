@@ -58,6 +58,7 @@ class TrashbinTest extends TestCase {
 	public function testTrashbin() {
 		$userSession = \OC::$server->getUserSession();
 
+		// Setup
 		$userFolder = \OC::$server->getUserFolder();
 		$folder = $userFolder->get(self::TEST_SHARED_FOLDER);
 		$file = $folder->newFile('file1.txt');
@@ -69,6 +70,7 @@ class TrashbinTest extends TestCase {
 
 		$this->assertFalse($folder->nodeExists('file1.txt'));
 
+		// Test list
 		$filesInTrash = Helper::getTrashFiles(self::TEST_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
 		$this->assertCount(1, $filesInTrash);
 
@@ -78,11 +80,43 @@ class TrashbinTest extends TestCase {
 		$filesInTrash = Helper::getTrashFiles(self::TEST_RANDOM_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
 		$this->assertCount(0, $filesInTrash);
 
+		// Test restore
 		$mountPoint = $this->setFunctionalUser();
 		$this->assertTrue(Trashbin::restore($path));
 
 		$this->setOwnerUser($mountPoint);
+
+		error_log('111');
+		$userFolder = \OC::$server->getUserFolder();
+		error_log('222');
+		$listing = $userFolder->getDirectoryListing();
+		error_log('333');
+		$listing2 = \array_filter($listing, function ($node) {
+			error_log('444');
+			$name = $node->getName();
+			error_log('555> '.$name);
+			return $name;
+		});
+		error_log('WHY???!!> '.sizeof($listing2));
+		error_log('listing: '.var_export($listing2, true));
+
 		$this->assertTrue($folder->nodeExists('file1.txt'));
+		$file = $folder->get('file1.txt');
+
+		// Reset state
+		$file->delete();
+		$filesInTrash = Helper::getTrashFiles(self::TEST_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
+
+		$deletedFileData = $filesInTrash[0]->getData();
+		$path = $deletedFileData['name'].'.d'.$deletedFileData['mtime'];
+
+		// Test permanent delete
+		$mountPoint = $this->setFunctionalUser();
+		$this->assertTrue(Trashbin::delete($path, \OCP\User::getUser()) > 0);
+
+		$this->setOwnerUser($mountPoint);
+		$filesInTrash = Helper::getTrashFiles(self::TEST_GROUP, '/', self::TEST_OWNER_USER, 'mtime', true);
+		$this->assertCount(0, $filesInTrash);
 	}
 
 	private function setFunctionalUser() {
@@ -93,12 +127,17 @@ class TrashbinTest extends TestCase {
 		\OC::$server->getMountManager()->addMount($fUserMount);
 
 		return $fUserMount->getMountPoint();
+
+		// self::loginHelper(self::TEST_FUNCTIONAL_USER);
+		// return '';
 	}
 
 	private function setOwnerUser(string $mountPoint) {
-		$fUser = \OC::$server->getUserManager()->get(self::TEST_OWNER_USER);
-		\OC::$server->getUserSession()->setUser($fUser);
+		// $fUser = \OC::$server->getUserManager()->get(self::TEST_OWNER_USER);
+		// \OC::$server->getUserSession()->setUser($fUser);
 
-		\OC::$server->getMountManager()->removeMount($mountPoint);
+		// \OC::$server->getMountManager()->removeMount($mountPoint);
+
+		self::loginHelper(self::TEST_OWNER_USER);
 	}
 }
