@@ -49,7 +49,7 @@ class SurfHelper {
         };
 
         // TODO add share type
-        $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_with`=? AND `uid_owner`=?';
+        $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_with`=? AND `uid_owner`=? AND `uid_initiator`=`uid_owner';
         $parameters = [$uid, $fuid];
 
         $statement = $this->dbConnection->prepare($query);
