@@ -1,35 +1,31 @@
 <?php
 namespace OCA\SURF_Trashbin;
 
-use OCP\IGroup;
 use OC\User\User;
 
 class SurfHelper {
 
-    private $groupManager;
     private $userManager;
     private $dbConnection;
 
     public function __construct() {
-        $this->groupManager = \OC::$server->getGroupManager();
         $this->userManager = \OC::$server->getUserManager();
         $this->dbConnection = \OC::$server->getDatabaseConnection();
     }
 
     public function getGroupsUserOwns(User $user) {
-        $groups = $this->groupManager->search('');
+        $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_type`=0 AND `share_with`=? AND `uid_owner` LIKE \'f_%\' AND `uid_initiator`=`uid_owner`';
+        $parameters = [$user->getUID()];
 
-		$groups = \array_filter($groups, function($group) use ($user) {
-            return $this->isUserOwnerOfGroup($user->getUID(), $group->getGID());
-		});
+        $statement = $this->dbConnection->prepare($query);
+		$statement->execute($parameters);
+        $shares = $statement->fetchAll();
 
-		$groups = \array_map(function($group) {
-			return $group->getGID();
-		}, $groups);
+        $groupNames = \array_map(function($share) {
+            return \substr($share['uid_owner'], 2);
+        }, $shares);
 
-		$groups = \array_values($groups);
-
-        return $groups;
+        return $groupNames;
     }
 
     public function isUserOwnerOfGroup(string $uid, string $gid) {
@@ -39,17 +35,7 @@ class SurfHelper {
             return false;
         }
 
-        $subAdminOfGroups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($this->userManager->get($fuid));
-        $subAdminOfGroups = \array_filter($subAdminOfGroups, function($group) use ($gid) {
-            return $group->getGID() === $gid;
-        });
-
-        if (\count($subAdminOfGroups) == 0) {
-            return false;
-        };
-
-        // TODO add share type
-        $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_with`=? AND `uid_owner`=?';
+        $query = 'SELECT * FROM `*PREFIX*share` WHERE `share_with`=? AND `uid_owner`=? AND `share_type`=0 AND `uid_initiator`=`uid_owner`';
         $parameters = [$uid, $fuid];
 
         $statement = $this->dbConnection->prepare($query);
