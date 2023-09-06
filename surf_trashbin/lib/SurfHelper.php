@@ -21,11 +21,14 @@ class SurfHelper {
 		$statement->execute($parameters);
         $shares = $statement->fetchAll();
 
-        $groupNames = \array_map(function($share) {
-            return \substr($share['uid_owner'], 2);
+        $groups = \array_map(function($share) {
+            return [
+                'gid' => \substr($share['uid_owner'], 2),
+                'name' => $this->userManager->get($share['uid_owner'])->getDisplayName()
+            ];
         }, $shares);
 
-        return $groupNames;
+        return $groups;
     }
 
     public function isUserOwnerOfGroup(string $uid, string $gid) {
