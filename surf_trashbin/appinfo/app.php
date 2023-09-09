@@ -42,7 +42,7 @@ if (\class_exists('OCA\Files\App')) {
 					'id' => 'surftrashbin-'.$group['gid'],
 					'appname' => 'surf_trashbin',
 					'script' => 'list.php',
-					'order' => 40 + $i,
+					'order' => 40,
 					'name' => $group['name'],
 				];
 			});
