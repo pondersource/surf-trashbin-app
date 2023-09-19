@@ -23,8 +23,8 @@
 		<tr>
 			<th id='headerName' class="hidden column-name">
 				<div id="headerName-container">
-					<input type="checkbox" id="select_all_trash" class="select-all checkbox"/>
-					<label for="select_all_trash">
+					<input type="checkbox" id="select_all_surftrash" class="select-all checkbox"/>
+					<label for="select_all_surftrash">
 						<span class="hidden-visually"><?php p($l->t('Select all'))?></span>
 					</label>
 					<a class="name sort columntitle" data-sort="name"><span><?php p($l->t('Name')); ?></span><span class="sort-indicator"></span></a>
