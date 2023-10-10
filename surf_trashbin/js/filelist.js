@@ -7,7 +7,7 @@
  * See the COPYING-README file.
  *
  */
-function asdasdasd(gName) {
+function setupFilelist(gName) {
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
 	/**

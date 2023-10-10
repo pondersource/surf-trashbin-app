@@ -13,7 +13,7 @@
 $(document).ready(function() {
 	const contents = $('div[id^="app-content-surftrashbin-"]');
 
-	for (var i = 0; i < contents.length; i++) {
+	for (let i = 0; i < contents.length; i++) {
 		let contentId = contents[i].id;
 		let groupName = contentId.substring(25);
 
@@ -27,7 +27,12 @@ $(document).ready(function() {
 						return;
 					}
 					this._initialized = true;
-					asdasdasd(groupName);
+
+					let headerNameContainer = contents[i].children[5].children[0].children[0].children[0].children[0];
+					headerNameContainer.children[0].id = 'select_all_surftrash_' + groupName;
+					headerNameContainer.children[1].setAttribute('for', headerNameContainer.children[0].id);
+
+					setupFilelist(groupName);
 					var urlParams = OC.Util.History.parseUrlQuery();
 					this.fileList = new OCA[groupName].FileList(
 						$('#' + contentId), {

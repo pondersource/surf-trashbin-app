@@ -34,7 +34,6 @@ if (\class_exists('OCA\Files\App')) {
 	if (isset($user)) {
 		$surfHelper = new SurfHelper();
 		$groups = $surfHelper->getGroupsUserOwns($user);
-
 		for ($i = 0; $i < \count($groups); $i++) {
 			$group = $groups[$i];
 			\OCA\Files\App::getNavigationManager()->add(function () use ($group, $i) {
