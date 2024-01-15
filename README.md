@@ -7,8 +7,8 @@ Each group *g* has a functional account named f_*g* which is the admin for that 
 ## Setup for testing and demo
 Note that this guide is tested only in the Gitpod.io environment
 1. Clone the [PonderSource dev-stock repository](https://github.com/pondersource/dev-stock) or open it as a new Gitpod project
-2. Call `./scripts/init-surf-trashbin.sh` in the terminal
-3. Call `./scripts/testing-surf-trashbin.sh` in the terminal. Note that this script is derived from the testing setup code provided by SURF [here](https://github.com/SURFnet/rd-oc-shared-trashbin/blob/master/owncloud/init.sh).
+2. Call `./init/surf-trashbin.sh` in the terminal
+3. Call `./tests/surf-trashbin.sh` in the terminal. Note that this script is derived from the testing setup code provided by SURF [here](https://github.com/SURFnet/rd-oc-shared-trashbin/blob/master/owncloud/init.sh).
 4. Open the firefox container instance in your browser under the port 5800. Inside the browser:
 5. Navigate to `https://oc1.docker/`
 6. Login using credentials `jennifer` as both the username and the password. Trashbin icons with titles `biochemistry` and `bioinformatics` should be visible in the left navigation bar above the main trashbin icon.
