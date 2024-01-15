@@ -24,11 +24,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 OCP\JSON::checkLoggedIn();
 OCP\JSON::callCheck();
 \OC::$server->getSession()->close();
 
-$files = $_POST['files'];
+$files = $_POST['files'] ?? null;
 $dir = '/';
 
 
@@ -40,14 +41,6 @@ $groupManager = \OC::$server->getGroupManager();
 $mountManager = \OC::$server->getMountManager();
 $mountConfigManager = \OC::$server->getMountProviderCollection();
 $realUser = \OCP\User::getUser();
-
-$fUserName = 'f_'.$groupName;
-$fUser = $userManager->get($fUserName);
-$userSession->setUser($fUser);
-
-$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
-$mountManager->addMount($fUserMount);
-
 
 if (isset($_POST['dir'])) {
 	$dir = \rtrim((string)$_POST['dir'], '/'). '/';
@@ -70,6 +63,13 @@ if (isset($_POST['allfiles']) && (string)$_POST['allfiles'] === 'true') {
 } else {
 	$list = \json_decode($files);
 }
+
+$fUserName = 'f_'.$groupName;
+$fUser = $userManager->get($fUserName);
+$userSession->setUser($fUser);
+
+$fUserMount = $mountConfigManager->getHomeMountForUser($fUser);
+$mountManager->addMount($fUserMount);
 
 $error = [];
 $success = [];
